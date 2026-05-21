@@ -17,9 +17,9 @@ app = FastAPI(title="Game Assistant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://chatboxgamboxd.netlify.app/"],
-    allow_methods=["https://chatboxgamboxd.netlify.app/"],
-    allow_headers=["https://chatboxgamboxd.netlify.app/"],
+    allow_origins=["https://chatboxgamboxd.netlify.app"],
+    allow_methods=["POST", "GET", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type"],                         
 )
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
