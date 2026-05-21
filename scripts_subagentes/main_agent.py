@@ -15,9 +15,6 @@ main_agent = create_agent(
     model=modelito,
     tools=[update_game_state,get_completion_guide,get_recommendations,get_ratings,get_discounts],
     checkpointer=InMemorySaver(),
-    middleware=[
-        #SummarizationMiddleware(model=modelitollama,trigger=("tokens",100),keep=("messages",1),),
-    ],
     state_schema=GameState,
     response_format=FinalOrchestratorOutput,
     system_prompt="""

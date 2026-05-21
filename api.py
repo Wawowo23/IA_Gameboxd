@@ -11,21 +11,21 @@ from typing import Optional
 import uuid
 
 from langchain.messages import HumanMessage
-from scripts_subagentes.main_agent import main_agent  # tu agente ya configurado
+from scripts_subagentes.main_agent import main_agent
 
 app = FastAPI(title="Game Assistant API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],        # en producción pon tu dominio
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["https://chatboxgamboxd.netlify.app/"],
+    allow_methods=["https://chatboxgamboxd.netlify.app/"],
+    allow_headers=["https://chatboxgamboxd.netlify.app/"],
 )
 # ── Schemas ──────────────────────────────────────────────────────────────────
 
 class ChatRequest(BaseModel):
     message: str
-    session_id: Optional[str] = None   # si no viene, creamos uno nuevo
+    session_id: Optional[str] = None
 
 class ChatResponse(BaseModel):
     session_id: str
@@ -39,7 +39,6 @@ class ChatResponse(BaseModel):
 async def chat(req: ChatRequest):
     session_id = req.session_id or str(uuid.uuid4())
 
-    # LangGraph usa thread_id para distinguir conversaciones en InMemorySaver
     config = {"configurable": {"thread_id": session_id}}
 
     try:
@@ -50,7 +49,6 @@ async def chat(req: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # result["structured_response"] es tu FinalOrchestratorOutput
     output = result.get("structured_response")
     if output is None:
         raise HTTPException(status_code=500, detail="El agente no devolvió respuesta estructurada.")
@@ -84,8 +82,7 @@ async def get_state(session_id: str):
 @app.delete("/session/{session_id}")
 async def delete_session(session_id: str):
     """Limpia la memoria de una sesión (útil para reiniciar la conversación)."""
-    # InMemorySaver no tiene delete nativo; simplemente devolvemos OK.
-    # Para borrado real, cambia a SqliteSaver o PostgresSaver.
+
     return {"status": "ok", "session_id": session_id}
 
 
